@@ -1,17 +1,24 @@
 package main
 
 import (
+	"flag"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
 )
 
+var (
+	httpListenAddr = flag.String("httpListenAddr", ":80", "HTTP Listen Address")
+)
+
 func main() {
-	log.Print("request-dump: starting server on :8096")
+	flag.Parse()
+
+	log.Printf("request-dump: starting server on %s", *httpListenAddr)
 
 	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":8096", nil))
+	log.Fatal(http.ListenAndServe(*httpListenAddr, nil))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +57,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		log.Print("Body: Error reading body: %v", err)
 	} else {
 		log.Print("Body:")
-		log.Print(body)
+		log.Print(string(body))
 	}
 	log.Print("------------------------------------------")
 	log.Print("")
